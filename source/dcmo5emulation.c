@@ -24,15 +24,20 @@
 #include <string.h>
 #include "../include/dcmo5rom.h"
 
+#include "dcmo5.h"
+
 // memory
-char car[0x10000];                   // espace cartouche 4x16K
+
+//char car[0x10000];                   // espace cartouche 4x16K
+char car[0x100];                   // for bitbox : none !
+
 char ram[0xc000];                    // ram 48K
 char port[0x40];                     // ports d'entree/sortie
 // pointers
 char *ramvideo;                      // pointeur couleurs ou formes
 char *ramuser;                       // pointeur ram utilisateur fixe
 char *romsys;                        // pointeur rom systeme
-char *rombank;                       // pointeur banque rom ou cartouche
+char const *rombank;                       // pointeur banque rom ou cartouche
 // flags cartouche
 int cartype;                         // type de cartouche (0=simple 1=switch bank, 2=os-9)
 int carflags;                        // bits0,1,4=bank, 2=cart-enabled, 3=write-enabled
@@ -44,23 +49,24 @@ int xpen, ypen;                      // coordonnees crayon optique
 int penbutton;                       // mouse left button state
 // affichage
 int videolinecycle;                  // compteur ligne (0-63)
-int videolinenumber;                 // numero de ligne video affich�e (0-311)
-int bordercolor;                     // couleur de la bordure de l'�cran
+int videolinenumber;                 // numero de ligne video affichée (0-311)
+int bordercolor;                     // couleur de la bordure de l'écran
 // divers
-int opcycles;                        // nombre de cycles de la derni�re op�ration
+int opcycles;                        // nombre de cycles de la derniére opération
 int sound;                           // niveau du haut-parleur
 
-// Acc�s m�moire
-char MgetMO5(unsigned short a);
+// Accés mémoire
+signed char MgetMO5(unsigned short a);
 void MputMO5(unsigned short a, char c);
-char (*Mgetc)(unsigned short);       // pointeur fonction courante
+signed char (*Mgetc)(unsigned short);       // pointeur fonction courante
 short Mgetw(unsigned short a) {
-    return ( Mgetc(a) << 8 | (Mgetc(++a) & 0xff) );
+    return ( Mgetc(a) << 8 | (Mgetc(a+1) & 0xff) );
 }
 
 void (*Mputc)(unsigned short, char); // pointeur fonction courante
 void Mputw(unsigned short a, short w) {
-    Mputc(a, w >> 8); Mputc(++a, w);
+    Mputc(a, w >> 8);
+    Mputc(a+1, w);
 }
 
 // Selection de banques memoire //////////////////////////////////////////////
@@ -92,7 +98,7 @@ int Iniln()
 }
 
 int Initn()
-{ // debut � 12 microsecondes ligne 56, fin � 51 microsecondes ligne 255
+{ // debut é 12 microsecondes ligne 56, fin é 51 microsecondes ligne 255
     if(videolinenumber < 56) return 0;
     if(videolinenumber > 255) return 0;
     if(videolinenumber == 56) if (videolinecycle < 24) return 0;
@@ -135,16 +141,17 @@ void Joysmove(int n, int x, int y)
     i = (x > 37767) ? 0 : 0x80; Joysemul(n++, i);
 }
 
-// Initialisation programme de l'ordinateur �mul� ////////////////////////////
+// Initialisation programme de l'ordinateur émulé ////////////////////////////
 void Initprog()
 {
     int i;
     extern int CC;
     extern short PC;
     short Mgetw(unsigned short a);
-    for(i = 0; i < 58; i++) touche[i] = 0x80;  // touches relach�es
+
+    for(i = 0; i < 58; i++) touche[i] = 0x80;  // touches relachées
     joysposition = 0xff;                       // manettes au centre
-    joysaction = 0xc0;                         // boutons relach�s
+    joysaction = 0xc0;                         // boutons relachés
     carflags &= 0xec;
     sound = 0;
     MO5videoram();
@@ -153,12 +160,11 @@ void Initprog()
     PC = Mgetw(0xfffe);
 }
 
-// Hardreset de l'ordinateur �mul� ///////////////////////////////////////////
+// Hardreset de l'ordinateur émulé ///////////////////////////////////////////
 void Hardreset()
 {
     int i;
     extern int pause6809;
-    extern void Initpalette();
     pause6809 = 1;
     Mputc = MputMO5;
     Mgetc = MgetMO5;
@@ -172,7 +178,6 @@ void Hardreset()
     for(i = 0; i < sizeof(ram); i++) ram[i] = -( (i & 0x80) >> 7 );
     for(i = 0; i < sizeof(port); i++) port[i] = 0;
     for(i = 0; i < sizeof(car); i++) car[i] = 0;
-    Initpalette();
     Initprog();
     pause6809 = 0;
 }
@@ -197,10 +202,9 @@ void Entreesortie(int io)
 }
 
 // Execution n cycles processeur 6809 ////////////////////////////////////////
-int Run(int n)                            // n est le nombre de cycles a ex�cuter
+int Run(int n)                            // n est le nombre de cycles a exécuter
 {
     int i, opcycles;
-    extern int Run6809();
     void Irq(), Displayline(int);
     i = 0;
     while(i < n)
@@ -238,15 +242,16 @@ void MputMO5(unsigned short a, char c)
                 case 0xa7cf: port[0x0f] = c; return; // registre controle action - musique
             }
             break;
-        case 0xb: case 0xc: case 0xd: case 0xe:
-            if(carflags & 8) if(cartype == 0) rombank[a] = c; break;
+        case 0xb: case 0xc: case 0xd: case 0xe: // ext mem !
+            // if(carflags & 8) if(cartype == 0) rombank[a] = c;  XXX disabled memory extension writes
+            break;
         case 0xf: break;
         default: ramuser[a] = c;
     }
 }
 
 // Lecture memoire MO5 ///////////////////////////////////////////////////////
-char MgetMO5(unsigned short a)
+signed char MgetMO5(unsigned short a)
 {
     switch(a >> 12)
     {

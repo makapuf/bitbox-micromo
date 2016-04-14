@@ -20,7 +20,7 @@
 // along with DCMO5 v11.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ////////////////////////////////////////////////////////////////////////////
-
+/*
 button mo5key[MO5KEY_MAX] = {
     {"N",        222, 114,  24, 24,  0}, // 0x00
     {"EFF",      418, 114,  24, 24,  1}, // 0x01
@@ -104,7 +104,7 @@ button joystickbutton[JOYSTICKBUTTON_MAX] = {
     {"[defaut]",  10, 209, 0, 0, 68},    // 0x00
     {"[sauver]", 228, 209, 0, 0, 68}  // 0x01
 };
-
+*/
 #ifdef WIN32
 // scancode hardware du PC Windows pour chaque touche MO5
 // (+ 0x40 pour les touches du pave numerique pour les distinguer des autres)

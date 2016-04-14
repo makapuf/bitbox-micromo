@@ -22,18 +22,18 @@
 // ////////////////////////////////////////////////////////////////////////////
 
 #define MO5KEY_MAX 58        // nombre de touches du clavier MO5
-#define KEYBOARDBUTTON_MAX 2 // nombre de boutons boite de dialogue clavier
+#define LANG_MAX 2           // nombre de langues differentes
+#define MSG_MAX 42           // nombre de textes dans chaque langue
 #define JOYKEY_MAX 10        // nombre total de contacts des deux manettes
+/*
+#define KEYBOARDBUTTON_MAX 2 // nombre de boutons boite de dialogue clavier
 #define JOYSTICKBUTTON_MAX 2 // nombre de boutons boite de dialogue manettes
 #define STATUSBUTTON_MAX 5   // nombre de boutons de la barre de statut
 #define OPTIONBUTTON_MAX 13  // nombre de boutons boite de dialogue options
-#define LANG_MAX 2           // nombre de langues differentes
-#define MSG_MAX 42           // nombre de textes dans chaque langue
 
 #define KEYBUTTON_MAX 58     // nombre de boutons differents clavier
 #define JOYBUTTON_MAX 5      // nombre de boutons differents joysticks
 #define OTHERBUTTON_MAX 14   // nombre de boutons differents autres
-
 typedef struct
 {
     char name[12];           // nom du bouton
@@ -44,3 +44,4 @@ typedef struct
     int n;                   // numero de la surface SDL
 } button;
 
+*/

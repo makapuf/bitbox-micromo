@@ -22,10 +22,13 @@
 //
 // ////////////////////////////////////////////////////////////////////////
 
+#include <stdint.h>
 // global variables
 int n;                           // cycle count
 int CC = 0x10;                   // condition code
-short PC, D, X, Y, U, S, DA, W;  // 6809 two byte registers + W work register
+
+int16_t PC, D, X, Y, U, S, DA, W;  // 6809 two byte registers + W work register
+
 char *PCHp, *PCLp, *Ap, *Bp;     // pointers to register bytes
 char *XHp, *XLp, *YHp, *YLp;     // pointers to register bytes
 char *UHp, *ULp, *SHp, *SLp;     // pointers to register bytes
@@ -103,7 +106,7 @@ char *DPp, *DDp, *WHp, *WLp;     // pointers to register bytes
 // Mgetw : reads two bytes from address a
 // Mputc : writes one byte to address a
 // Mputw : writes two bytes to address a
-extern char (*Mgetc)(unsigned short);       // pointer to function
+extern signed char (*Mgetc)(unsigned short);       // pointer to function
 extern void (*Mputc)(unsigned short, char); // pointer to function
 extern short Mgetw(unsigned short);         // function
 extern void  Mputw(unsigned short, short);  // function

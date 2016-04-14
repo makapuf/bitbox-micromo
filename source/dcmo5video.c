@@ -71,18 +71,22 @@ void Initpalette()
 // Display screen /////////////////////////////////////////////////////////////
 void Displayscreen()
 {
-    extern SDL_Surface *dialogbox;
-    extern SDL_Surface *statusbar;
-    extern SDL_Rect dialogrect;
-    extern int dialog;
+    // extern SDL_Surface *dialogbox;
+    // extern SDL_Surface *statusbar;
+    // extern SDL_Rect dialogrect;
+    // extern int dialog;
     if(screenlocked) return;
+    /*
     if(dialog > 0)
         if(SDL_BlitSurface(dialogbox, NULL, screen, &dialogrect) < 0) SDL_error(31);
+        */
     framecount += framedelay;
     if(framecount >= 10)  // 10trames=0.2seconde
     {
+        /*
         if(statusbar != NULL)
             if(SDL_BlitSurface(statusbar, NULL, screen, NULL) < 0) SDL_error(32);
+        */
         framecount = 0;
     }
     SDL_Flip(screen);
@@ -151,13 +155,14 @@ void Displayline(int n)
     screenlocked = 0;
 }
 
+
 // Resize screen //////////////////////////////////////////////////////////////
 void Resizescreen(int x, int y)
 {
     int i, savepause6809;
     extern int pause6809;
-    extern int dialog;
-    extern void Drawoptionbox();
+    //extern int dialog;
+    //extern void Drawoptionbox();
     savepause6809 = pause6809;
     pause6809 = 1; SDL_Delay(200);
     // effacement surface de l'ecran
@@ -186,11 +191,12 @@ void Resizescreen(int x, int y)
     // rafraichissement de l'écran
     vblcount = 0;
     Drawstatusbar();
-    if(dialog == 2) Drawoptionbox();
+    // if(dialog == 2) Drawoptionbox();
     for(i = 48; i < 264; i++) Displayline(i);
     Displayscreen();
     pause6809 = savepause6809;
 }
+
 
 // Set mouse position /////////////////////////////////////////////////////////
 void Setmouseposition(int x, int y)

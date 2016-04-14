@@ -27,6 +27,8 @@
 #include <sys/stat.h>
 #include <ctype.h>
 
+#include "dcmo5.h"
+
 // Variable globales /////////////////////////////////////////////////////////
 DIR *dmemo = NULL;  // pointeur directory pour recherche memo5
 FILE *ffd = NULL;   // pointeur fichier disquette
@@ -158,7 +160,6 @@ void Loadfd(char *name)
 void Readoctetk7()
 {
     int byte = 0;
-    void Erreur(int n);
     extern void Drawk7index();
     extern void Initprog();
     if(fk7 == NULL) {Initprog(); Erreur(11); return; }
@@ -256,7 +257,7 @@ void Readpenxy()
 }
 
 // Initialisation noms de fichiers et pointeur de fonction de chargement //////
-void Initfilenames(char c)
+void Initfilenames( void )
 {
     extern void (*Load[]);
     k7name[0] = 0;

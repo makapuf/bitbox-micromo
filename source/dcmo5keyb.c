@@ -48,6 +48,7 @@ extern SDL_Surface *dialogbox;       // surface d'affichage dialogbox
 extern SDL_Surface *buttonsurface[][2];
 extern char *msg[LANG_MAX][MSG_MAX]; // messages en plusieurs langues
 
+/*
 // fonctions externes
 extern void Info(int i);
 extern void Displayscreen();
@@ -92,6 +93,7 @@ void Displayjoy()
 }
 
 // Création de la boite de dialogue du clavier ////////////////////////////////
+
 void Clavier()
 {
     SDL_Rect rect;
@@ -132,6 +134,8 @@ void Clavier()
     Displaykey(0);  // nom de la touche lastkey
     pause6809 = 0;
 }
+
+
 
 // Création de la boite de dialogue des manettes //////////////////////////////
 void Manettes()
@@ -179,6 +183,7 @@ void Manettes()
     Displayjoy(0); // nom de la fonction lastjoy
     pause6809 = 0;
 }
+
 
 // Restauration de la configuration par defaut des touches ///////////////////
 void Restorekeydefault()
@@ -359,11 +364,13 @@ void Joyclick()
     Displayjoy();
 }
 
+*/
 // Initialisation du clavier /////////////////////////////////////////////////
 void Keyboardinit()
 {
     int i, j;
-    extern FILE *fpi;
+    // extern FILE *fpi;
+
     // initialisation des tables par defaut
     for(i = 0; i < 256; i++)
     {
@@ -372,6 +379,7 @@ void Keyboardinit()
         for(j = 0; j < JOYKEY_MAX; j++) if(pcjoycode[j] == i) break;
         mo5joycode[i] = j;
     }
+    /*
     // recuperation des valeurs de dcmo5.ini (0x40=touches 0x140=joysticks)
     fseek(fpi, 0, SEEK_END);
     i = (int)ftell(fpi); // Info(i);
@@ -381,6 +389,7 @@ void Keyboardinit()
     if(i < 0x240) return;
     fseek(fpi, 0x140, SEEK_SET); j = fgetc(fpi); fseek(fpi, 0x140, SEEK_SET);
     if(j == JOYKEY_MAX) fread(mo5joycode, 256, 1, fpi);
+    */
 }
 
 // Key up ////////////////////////////////////////////////////////////////////
@@ -401,11 +410,13 @@ void Keyup(int keysym, int scancode)
     if(i < JOYKEY_MAX)
     {
         Joysemul(i, 0x80);
+        /*
         if(dialog == 4)
         {
             n = joykey[i].n; rect.x = joykey[i].x; rect.y = joykey[i].y;
             SDL_BlitSurface(buttonsurface[n][0], NULL, dialogbox, &rect);
         }
+        */
     }
 
     // emulation clavier
@@ -414,11 +425,13 @@ void Keyup(int keysym, int scancode)
     {
         touche[i] = 0x80;
         // dessin de la touche relachee
+        /*
         if(dialog == 3)
         {
             rect.x = mo5key[i].x; rect.y = mo5key[i].y;
             SDL_BlitSurface(buttonsurface[i][0], NULL, dialogbox, &rect);
         }
+        */
     }
 }
 
@@ -479,6 +492,7 @@ void Keydown(int keysym, int scancode)
     // emulation joystick
     i = mo5joycode[keycode & 0xff]; // Info(i);
     if(i < JOYKEY_MAX) Joysemul(i, 0x00);
+    /*
     if(dialog == 4)
     {
         Displayjoy();
@@ -488,10 +502,12 @@ void Keydown(int keysym, int scancode)
             SDL_BlitSurface(buttonsurface[n][1], NULL, dialogbox, &rect);
         }
     }
+    */
 
     // emulation clavier
     i = mo5keycode[keycode & 0xff];
     if(i < MO5KEY_MAX) touche[i] = 0x00;
+    /*
     if(dialog == 3)
     {
         Displaykey();
@@ -501,6 +517,7 @@ void Keydown(int keysym, int scancode)
             SDL_BlitSurface(buttonsurface[i][1], NULL, dialogbox, &rect);
         }
     }
+    */
 }
 
 // Test touches SHIFT, ALT et CTRL gauche et droite //////////////////////////
