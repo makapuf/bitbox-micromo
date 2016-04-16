@@ -28,10 +28,14 @@ const uint8_t palette[16] = {
 
 };
 
-int pause6809;        // processor pause state
 int report;           // nombre de milliemes de cycle a reporter
 
+
+/* Debug show ram replaces drawing the real device screen  with
+   a graphical view of the memory for quick debugging. */
 #define DEBUG_SHOWRAM 0
+
+
 
 void graph_frame() {};
 void graph_line8(void) {
@@ -74,48 +78,6 @@ void graph_line8(void) {
 }
 
 
-
-// 0x1000 block of data
-unsigned int crc32b(unsigned char *message) {
-   int i, j;
-   unsigned int byte, crc, mask;
-
-   i = 0;
-   crc = 0xFFFFFFFF;
-   while (i<0x100) {
-      byte = message[i];            // Get next byte.
-      crc = crc ^ byte;
-      for (j = 7; j >= 0; j--) {    // Do eight times.
-         mask = -(crc & 1);
-         crc = (crc >> 1) ^ (0xEDB88320 & mask);
-      }
-      i = i + 1;
-   }
-   return ~crc;
-}
-
-
-// make a visual checksum of ram (state) on screen
-
-uint32_t tmpdata[64]; // local copy to avoir polluting ram
-void visi_ram()
-{
-	for (int k=0;k<0xb;k++) {
-		for (int i=0;i<0x10;i++){
-			// each RAM segment
-			tmpdata[i] = crc32b(ram+k*0x1000+i*0x100);
-			message("%x %x\n",k*0x1000+i*0x100,tmpdata[i]);
-		}
-
-		memcpy(ram+40*k, tmpdata, sizeof(tmpdata));
-	}
-
-	memset(ram+0x2000,0xaa,0x2000); // pattern !
-
-}
-
-
-
 void game_init() {
     // initialisations
 //    Joyinit();                        // Joysticks initialization
@@ -127,8 +89,11 @@ void game_init() {
 }
 
 void game_frame() {
-	// sync FRAME now -> sound !
-	Run(1000000UL / 60 );
+	// sync FRAME now -> should be in sound callback for better sync !
+	if (!pause6809)
+		Run(1000000UL / 60 );
+
+	micromo_keyboard();
 }
 
 // STUBS for BItbox

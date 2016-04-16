@@ -42,7 +42,7 @@ char const *rombank;                       // pointeur banque rom ou cartouche
 int cartype;                         // type de cartouche (0=simple 1=switch bank, 2=os-9)
 int carflags;                        // bits0,1,4=bank, 2=cart-enabled, 3=write-enabled
 // keyboard, joysticks and mouse
-int touche[58];                      // etat des touches MO5
+uint8_t touche[58];                      // etat des touches MO5
 int joysposition;                    // position des manches
 int joysaction;                      // position des boutons d'action
 int xpen, ypen;                      // coordonnees crayon optique
@@ -54,6 +54,7 @@ int bordercolor;                     // couleur de la bordure de l'écran
 // divers
 int opcycles;                        // nombre de cycles de la derniére opération
 int sound;                           // niveau du haut-parleur
+int pause6809;                       // processor pause state
 
 // Accés mémoire
 signed char MgetMO5(unsigned short a);
