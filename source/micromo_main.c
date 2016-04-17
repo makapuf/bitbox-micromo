@@ -3,9 +3,8 @@
 #include <string.h>
 #include <bitbox.h>
 #include "dcmo5.h"
+#include "micromo_dialog.h"
 
-#define TOUR_H ((VGA_H_PIXELS-320)/2)
-#define TOUR_V ((VGA_V_PIXELS-200)/2)
 
 const uint8_t palette[16] = {
 	0,   // noir
@@ -37,8 +36,15 @@ int report;           // nombre de milliemes de cycle a reporter
 
 
 
+
 void graph_frame() {};
 void graph_line8(void) {
+
+	if (vga_odd) {
+		dialog_drawline8();
+		return;
+	}
+
 
 	if (DEBUG_SHOWRAM) {
 		memset(draw_buffer,1,400);
@@ -48,9 +54,8 @@ void graph_line8(void) {
 		return;
 	}
 
-	if (vga_odd) return; // just skip now ? call menu ?
 
-	if ((vga_line<TOUR_V || vga_line>TOUR_V+200)) {
+	if ((vga_line<TOUR_V || vga_line>=TOUR_V+200)) {
 		memset(draw_buffer, palette[bordercolor], VGA_H_PIXELS);
 	} else {
 		uint8_t *dst = (uint8_t *)draw_buffer; // use 8bit interface
@@ -86,6 +91,7 @@ void game_init() {
    // Initfilenames();
     Init6809registerpointers();
     Hardreset();                      // MO5 initialization
+    dialog_text("===== microMO ======",3,(char *[]){"coucou               ","ceci est un emulateur","eh ouais             "});
 }
 
 void game_frame() {
@@ -94,25 +100,14 @@ void game_frame() {
 		Run(1000000UL / 60 );
 
 	micromo_keyboard();
+	dialog_frame();
 }
 
 // STUBS for BItbox
 
 void Erreur(int n) {}
-void Displayline(videolinenumber) {}
+void Displayline(int videolinenumber) {}
 
-// stubs devices
-int k7protection;
-int fdprotection;
-
-void Readsector() {}
-void Writesector() {}
-void Formatdisk() {}
-void Readbitk7() {}
-void Readoctetk7() {}
-void Writeoctetk7() {}
-void Readpenxy() {}
-void Imprime() {}
 
 /*
 

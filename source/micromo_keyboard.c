@@ -1,5 +1,6 @@
 // micromo: gesiton du clavier via API bitbox
 #include "dcmo5.h"
+#include "micromo_dialog.h"
 
 // pc -> mo5 keycode. reversed with designated init !
 static uint8_t pckeycode[]= {
@@ -73,20 +74,20 @@ void micromo_keyboard (void)
 		else if (e.type==evt_keyboard_press) {
 
 			// prise en charge directe par l'emulateur
-		    if(e.kbd.key == 0x29) {  // ESC == RESET (XXX menu dont reset)
-		    	Initprog();
+		    if(e.kbd.key == 0x29) {  // ESC == RESET (XXX menu don't reset)
+                Initprog();
 		    	pause6809 = 0;
 		    	return;
 	    	}
 	    	if (e.kbd.key)
     			touche[pckeycode[e.kbd.key]] = 0x00;
 
-			message ("pressed key %x mod %x sym %c mo5 %d\n",e.kbd.key, e.kbd.mod, e.kbd.sym, pckeycode[e.kbd.key]);
+			// message ("pressed key %x mod %x sym %c mo5 %d\n",e.kbd.key, e.kbd.mod, e.kbd.sym, pckeycode[e.kbd.key]);
 		} else if (e.type==evt_keyboard_release) {
 
 	    	if (e.kbd.key)
 	    		touche[pckeycode[e.kbd.key]] = 0x80;
-			message ("released key %x mod %x sym %c mo5 %d\n",e.kbd.key, e.kbd.mod, e.kbd.sym, pckeycode[e.kbd.key]);
+			// message ("released key %x mod %x sym %c mo5 %d\n",e.kbd.key, e.kbd.mod, e.kbd.sym, pckeycode[e.kbd.key]);
 
 		}
 	}

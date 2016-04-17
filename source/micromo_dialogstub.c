@@ -18,11 +18,5 @@ void Drawmessagebox(char *titre, char *text1[], char *text2[])
 
 void Drawstatusbar() {}
 
-void Drawk7index()
-{
-    extern FILE * fk7;
-    extern int k7index, k7indexmax;
-    if(fk7 != NULL)
-        printf("K7 index %03d/%03d\n", k7index, k7indexmax);
-}
+void Drawk7index() {}
 
