@@ -1,4 +1,4 @@
-// dcmoto.h
+// dcmoto.h : interface to dcmo5 functions
 
 #include "bitbox.h"
 
