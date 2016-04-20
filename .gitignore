@@ -4,3 +4,6 @@ picture/
 build/
 _old_*
 dcmo.ini
+*.bin
+*_emu
+*.elf
