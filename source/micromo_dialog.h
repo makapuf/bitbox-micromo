@@ -13,3 +13,6 @@ void dialog_drawline8();
 void dialog_keypress(struct event e);
 void dialog_frame( void );
 int dialog_active(); // is dialog active ?
+
+
+void main_memnu(); // show main menu

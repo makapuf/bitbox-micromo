@@ -135,3 +135,41 @@ void Playsound(void *udata, Uint8 *stream, int bufferlength)
     }
     Testshiftkey();                          // contournement bug SDL sur l'appui simultane SHIFT, ALT, CTRL
 }*/
+
+
+void cb_k7(int choice) {
+    message("selected k7 :%d\n",choice);
+}
+
+
+void main_cb(int x) {
+    message("selected %d\n",x);
+    switch(x) {
+        case 0:
+            dialog_menu("Keyboard Help",
+            	"EFF : Del\nDEBUT : Home\nRAZ : PgUp\nCNT : PgDn\nACC : Ctrl droite\n"
+            	"STOP : pause\nMAJ : maj gauche\nBASIC : Maj Droite",0);
+            break;
+        case 1: // reboot
+            Initprog();
+            pause6809 = 0;
+            break;
+        case 2:  // select k7
+            dialog_menu("Cassette select",
+            	"Arkanoid\nDemo\netc\netc\nceci\nest\nun\ntres\nlong\nmenu"
+            	"\nmais\nca\ndevrait\naller",cb_k7);
+            break;
+        case 3:
+            pause6809 = 1-pause6809;
+            break;
+        case 4 :
+            dialog_menu("MicroMo","Micromo est un port\nde l'emulateur DCMO5 v11\nsur la micro Bitbox.\n\n"
+            	"DCMO5 (07) Daniel Coulom\nMicroMO (16) Makapuf :)",0);
+            break;
+    }
+}
+
+void main_menu()
+{
+    dialog_menu("MicroMO","Help\nReset\nSelect k7 (F2)\nPause\nA propos...",main_cb);
+}
