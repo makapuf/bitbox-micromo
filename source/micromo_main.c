@@ -91,7 +91,6 @@ void game_init() {
    // Initfilenames();
     Init6809registerpointers();
     Hardreset();                      // MO5 initialization
-    dialog_text("===== microMO ======",3,(char *[]){"coucou               ","ceci est un emulateur","eh ouais             "});
 }
 
 void game_frame() {

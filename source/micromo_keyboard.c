@@ -64,6 +64,33 @@ static uint8_t pckeycode[]= {
     [0xe5] = 0x39  // 0x39 BASIC (rshift)
 };
 
+
+void cb_k7(int choice) {
+    message("selected k7 :%d\n",choice);
+}
+
+void do_nothing(int x) {
+    message("selected %d\n",x);
+    switch(x) {
+        case 0:
+            dialog_menu("Keyboard Help", "EFF : Del\nDEBUT : Home\nRAZ : PgUp\nCNT : PgDn\nACC : Ctrl droite\nSTOP : pause\nMAJ : maj gauche\nBASIC : Maj Droite",0);
+            break;
+        case 1: // reboot
+            Initprog();
+            pause6809 = 0;
+            break;
+        case 2:  // select k7
+            dialog_menu("Cassette select","Arkanoid\nDemo\netc\netc\nceci\nest\nun\ntres\nlong\nmenu\nmais\nca\ndevrait\naller",cb_k7);
+            break;
+        case 3:
+            pause6809 = 1-pause6809;
+            break;
+        case 4 :
+            dialog_menu("MicroMo","Micromo est un port\nde l'emulateur DCMO5 v11\nsur la micro Bitbox.\n\nDCMO5 (07) Daniel Coulom\nMicroMO (16) Makapuf :)",0);
+            break;
+    }
+}
+
 void micromo_keyboard (void)
 {
 	struct event e;
@@ -72,15 +99,19 @@ void micromo_keyboard (void)
 		if (e.type==no_event)
 			break;
 		else if (e.type==evt_keyboard_press) {
-
-			// prise en charge directe par l'emulateur
-		    if(e.kbd.key == 0x29) {  // ESC == RESET (XXX menu don't reset)
-                Initprog();
-		    	pause6809 = 0;
-		    	return;
-	    	}
-	    	if (e.kbd.key)
-    			touche[pckeycode[e.kbd.key]] = 0x00;
+            if (dialog_active()) {
+                dialog_keypress(e); // menu ? if in menu dont send keys to emulator
+            } else {
+                // prise en charge directe par l'emulateur
+                if(e.kbd.key == 0x29) {
+                    /* KEY_PAUSE : pause, */
+                    dialog_menu("MicroMO","Help\nReset\nSelect k7 (F2)\nPause\nA propos...",do_nothing);
+                    return;
+                } else {
+                    if (e.kbd.key)
+                        touche[pckeycode[e.kbd.key]] = 0x00;
+                }
+            }
 
 			// message ("pressed key %x mod %x sym %c mo5 %d\n",e.kbd.key, e.kbd.mod, e.kbd.sym, pckeycode[e.kbd.key]);
 		} else if (e.type==evt_keyboard_release) {

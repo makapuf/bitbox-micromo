@@ -4,76 +4,141 @@
 #include "dcmo5.h"
 #include "micromo_dialog.h"
 
-// color : bg menu dark title, hauteur differente selon menu, semi trans ?  ...
+// colors
+#define COL_WHITE 255
+#define COL_LIGHTGREY 222
+#define COL_MIDGREY 181
+#define COL_DARKGREY 148
+#define COL_BLACK 0
 
-static struct Dialog dialog;
-char *dialog_items[dialog_nb_lines];
+#define BG_TITLE 233 // bg title orange
+#define BG_SELECTED 242 // bg selected - orange
+
+#define FONT (mo5rom + 0xfc9e - 0xc000 -1)
+#define POS_HIDDEN (-200)
+
+// internal state used for display
+static char vram[DIALOG_H][DIALOG_W];
+static char vram_title[DIALOG_W];
+
+static int pos_y=POS_HIDDEN; // Y on screen position of window.
+static int pos_y_target=POS_HIDDEN;
+
+static int select; // option menu choisie (absolue).
+static int offset; // décalage d'affichage
+
+static int nb_elements; // current text/ menu number of lines
+
+// interface data
+static char *title, *items; // titre de la fenetre, lignes de contenu separees par \n, terminée par \0
+static void (*callback)(int); // if null display text, else display/interact as menu
+
 
 #define KB_DN 0x51
 #define KB_UP 0x52
 #define KB_OK 0x28 // entree
+#define KB_ESC 0x29
 
-void dialog_buttonpress(struct event e)
+void redraw()
+{
+	// copy title
+	memset(vram_title,'-',sizeof(vram_title)); // clear title
+	int l = strlen(title);
+	message("len %d\n",l);
+	memcpy(vram_title+(DIALOG_W-l)/2,title,l);
+
+	// copy items, with offset
+	memset(vram,' ',sizeof(vram)); // clear screen
+	char *src=items;
+	char *dst=&vram[0][0]; // start up left
+	int  line=-offset;
+
+	// skip offset lines
+	while (*src && line<0) {
+		if (*src++=='\n') line+=1;
+	}
+
+	// clear display
+	while (*src) {
+		if (*src=='\n') { // skip line ?
+			if (line <= DIALOG_H) {
+				dst = &vram[1+line++][0];
+			} else {
+				break;
+			}
+		} else {
+			*dst++ = *src;
+		}
+		src++;
+	}
+}
+
+void dialog_keypress(struct event e)
 {
 
-	switch (dialog.type) {
-		case DialogNone :
-			// do nothing
-			break;
+	int old_offset=offset;
 
-		case DialogText :
-			switch(e.kbd.key) {
-				case KB_OK :
-					dialog_quit();
-					break;
-				case KB_UP :
-					if (dialog.offset>0)
-						dialog.offset--;
-					break;
-				case KB_DN :
-					if (dialog.offset<dialog.nb_elements)
-						dialog.offset++;
-					break;
-			}
-			break;
+	if (callback) { // menu
+		switch (e.kbd.key) {
+			case KB_OK :
+				dialog_quit();
+				callback(select);
+				break;
 
-		case DialogMenu :
-			switch(e.kbd.key) {
-				case KB_OK :
-					dialog.callback(dialog.select);
-					dialog_quit();
-					break;
+			case KB_UP :
+				if (select>0)
+					select--;
+				if (select < offset)   // make it visible
+					offset = select;
+				break;
 
-				case KB_UP :
-					if (dialog.select>0)
-						dialog.select--;
-					if (dialog.select < dialog.offset)   // make it visible
-						dialog.select = dialog.offset;
-					break;
+			case KB_DN :
+				if ( select < nb_elements)
+					select++;
+				// make it visible
+				if ( select >= offset+DIALOG_H )
+					offset = select-DIALOG_H+1;
 
-				case KB_DN :
-					if ( dialog.select < dialog.nb_elements)
-						dialog.select++;
-					if ( dialog.select > dialog.offset+dialog_nb_lines ) // make it visible
-						dialog.select = dialog.offset+dialog_nb_lines;
-					break;
-			}
-			break;
+				break;
+			case KB_ESC :
+				// no callback
+				dialog_quit();
+				break;
+		}
+	} else { // text display : scroll, dismiss after OK
+		switch(e.kbd.key) {
+			case KB_OK :
+			case KB_ESC :
+				dialog_quit();
+				break;
+			case KB_UP :
+				if (offset>0)
+					offset--;
+				break;
+			case KB_DN :
+				if (offset<nb_elements- DIALOG_H )
+					offset++;
+				break;
+		}
 	}
-	//
+
+	message("redraw, ofs=%d sel=%d\n",offset,select);
+
+	if (old_offset!=offset)
+		redraw();
 }
 
 
 // animate decelerating menu window
 void dialog_frame( void )
 {
-	dialog.pos_y += (dialog.pos_y_target - dialog.pos_y)/16;
+	pos_y += (pos_y_target - pos_y)/16;
 
 	// move at least 1 in the right direction
-	if (dialog.pos_y > dialog.pos_y_target) {
-		 dialog.pos_y -= 1;
-	} else if (dialog.pos_y < dialog.pos_y_target) {
-		dialog.pos_y += 1;
+	if (pos_y > pos_y_target) {
+		 pos_y -= 1;
+	} else if (pos_y < pos_y_target) {
+		pos_y += 1;
 	}
 
 }
@@ -93,7 +158,7 @@ static inline void textline(char *dst, int line ,char *txt, char bg)
 
 void dialog_drawline8()
 {
-	int line = vga_line-TOUR_V-dialog.pos_y; // relative line in dialog
+	int line = vga_line-TOUR_V-pos_y; // relative line in dialog
 
 	char *draw=((char*)draw_buffer) + TOUR_H + DIALOG_X; // where to draw
 
@@ -102,19 +167,18 @@ void dialog_drawline8()
 		draw[-1]=COL_WHITE;
 		draw[DIALOG_W*8]=COL_MIDGREY;
 
-	} else if (line==8*(dialog_nb_lines+1)) { // low 3D border
+	} else if (line==8*(DIALOG_H+1)) { // low 3D border
 		memset(draw,COL_DARKGREY,DIALOG_W*8);
 		draw[-1]=COL_MIDGREY;
 		draw[DIALOG_W*8]=COL_BLACK;
 
-	} else if (line>=0 && line <8*(dialog_nb_lines+1)) {
-		// in-window
+	} else if (line>=0 && line <8*(DIALOG_H+1)) {
 		if (line/8==0) { // title
-			textline(draw,line%8, dialog.title, BG_TITLE);
-		} else {
+			textline(draw,line%8, vram_title, BG_TITLE);
+		} else { // text
 			textline(draw,line%8,
-				(line/8<dialog.nb_elements) ? dialog.elements[line/8] : EMPTY_LINE,
-				(line/8==dialog.select-dialog.offset) ? BG_SELECTED : COL_MIDGREY
+				vram[line/8-1],
+				(line/8==select-offset+1) ? BG_SELECTED : COL_MIDGREY
 				);
 		}
 
@@ -124,42 +188,32 @@ void dialog_drawline8()
 	}
 }
 
-// initiates a dialog of type text
-void dialog_text(char *title, int nblines, char **lines)
-{
-	// adds a last line with 'ok', select it
-	dialog.title=title;
-	dialog.nb_elements=nblines+1;
-	// blit it with chars, better
-	dialog.elements = dialog_items;
-	for (int i=0;i<nblines;i++)
-		dialog.elements[i]=lines[i];
-	dialog.elements[nblines]=OK_LINE;
-	dialog.type=DialogText;
-	dialog.select=nblines;
-	dialog.offset=0;
-	dialog.pos_y_target=8;
-
-	dialog.pos_y=-100; // for starter !
-
+// external interface
+int dialog_active() {
+	return pos_y_target!=POS_HIDDEN;
 }
 
-// initialise menu
-void dialog_menu(char *title, int nbitems, char **items, void (*callback)(int))
+
+// initialise menu / text
+void dialog_menu(char *_title, char *_items, void (*_callback)(int))
 {
-	dialog.title=title;
-	dialog.nb_elements=nbitems;
-	dialog.elements = dialog_items;
-	for (int i=0;i<nbitems;i++)
-		dialog.elements[i]=items[i];
-	dialog.callback=callback;
-	dialog.select=0;
-	dialog.offset=0;
-	dialog.pos_y_target=8;
+	title = _title;
+	items = _items;
+	callback=_callback;
+	select=callback ? 0 : -1;
+	offset=0;
+	pos_y_target=8;
+
+	// count number of lines
+	nb_elements=0;
+	while (*_items++) {
+		if (*_items=='\n') nb_elements++;
+	}
+
+	redraw();
 }
 
 void dialog_quit()
 {
-	dialog.type=0;
-	dialog.pos_y_target=-100;
+	pos_y_target=POS_HIDDEN;
 }

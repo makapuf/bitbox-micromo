@@ -28,6 +28,7 @@ void Init6809registerpointers();
 void Initfilenames( );
 void Hardreset();
 void Initoptions();
+void Initprog();
 
 void Joyinit();                        // Joysticks initialization
 void Keyboardinit();                   // Keyboard initialization
