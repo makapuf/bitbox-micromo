@@ -25,14 +25,8 @@ extern int pause6809; 						// in dcmo5_emulation
 void micromo_keyboard();
 
 void Init6809registerpointers();
-void Initfilenames( );
 void Hardreset();
-void Initoptions();
 void Initprog();
-
-void Joyinit();                        // Joysticks initialization
-void Keyboardinit();                   // Keyboard initialization
-
 
 // in dc6809
 int Run6809(); // execs an instruction
