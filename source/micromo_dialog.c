@@ -58,10 +58,9 @@ void redraw()
 		if (*src++=='\n') line+=1;
 	}
 
-	// clear display
 	while (*src) {
 		if (*src=='\n') { // skip line ?
-			if (line <= DIALOG_H) {
+			if (line < DIALOG_H-1) {
 				dst = &vram[1+line++][0];
 			} else {
 				break;
