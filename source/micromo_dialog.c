@@ -150,8 +150,7 @@ static inline void textline(char *dst, int line ,char *txt, char bg)
 		char c = FONT[(unsigned char)(txt[i]-' ')*8+(8-line)];
 
 		for (int j=0;j<8;j++,c<<=1) {
-			*dst &= 0xaa;
-			*dst++ |= c&0x80 ? COL_BLACK:bg;
+			*dst++ = c&0x80 ? COL_BLACK:bg;
 		}
 	}
 }
