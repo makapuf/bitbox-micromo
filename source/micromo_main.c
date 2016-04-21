@@ -19,9 +19,9 @@ const uint8_t palette[16] = {
 	181, // gris
 	203, // rose
 	124, // vert clair
-	220, // jaune poussin
+	220, // sable
 	109, // bleu ciel
-	207, // rose parme
+	207, // parme
 	191, // cyan clair
 	209, // orange
 
@@ -72,13 +72,13 @@ void graph_line8(void) {
 		for (int byte=0;byte<40;byte++) // 320 pixels / 8 = 40 octets par ligne
 		{
 			uint8_t c  = *(src); // color attribute
-			uint8_t fond = palette [ c >> 4 ];
+			uint8_t fond   = palette [ c >> 4 ];
 			uint8_t teinte = palette [ c &0xf ];
 
 			// now blit - xx use SEL on device ?
 			uint8_t f = *(src++ + 0x2000);
 			for (int i=0;i<8;i++,f<<=1) {
-				*dst++ = f&0x80?teinte:fond;
+				*dst++ = f&0x80?fond:teinte;
 			}
 		}
 	}
