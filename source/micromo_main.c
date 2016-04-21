@@ -29,6 +29,8 @@ const uint8_t palette[16] = {
 
 int report;           // nombre de milliemes de cycle a reporter
 
+int frequency = 1000;        // frequence 6809 en kHz
+int k7protection = 1;        // protection k7 (0=lecture/ecriture 1=lecture seule)
 
 /* Debug show ram replaces drawing the real device screen  with
    a graphical view of the memory for quick debugging. */
@@ -87,7 +89,7 @@ void game_init() {
     // initialisations
 //    Joyinit();                        // Joysticks initialization
 //    Keyboardinit();                   // Keyboard initialization
-    Initoptions();                    // Option initialization
+
    // Initfilenames();
     Init6809registerpointers();
     Hardreset();                      // MO5 initialization
@@ -102,7 +104,7 @@ void game_frame() {
 	dialog_frame();
 }
 
-// STUBS for BItbox
+// STUBS for Bitbox
 
 void Erreur(int n) {}
 void Displayline(int videolinenumber) {}

@@ -2,7 +2,6 @@ NAME = micromo
 files = micromo_main \
    dcmo5emulation \
    dc6809emul \
-   dcmo5options \
    micromo_dialogstub \
    micromo_keyboard \
    micromo_devices \
@@ -17,4 +16,4 @@ GAME_BINARY_FILES = software/SHR_MO5_FirstEver.k7
 
 include $(BITBOX)/lib/bitbox.mk
 
-
+source/micromo_devices.c: build/binaries.h
