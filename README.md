@@ -2,6 +2,8 @@
 
 ![Screenshot](https://raw.githubusercontent.com/makapuf/bitbox-micromo/master/screen.png)
 
+![My first demo](https://raw.githubusercontent.com/makapuf/bitbox-micromo/master/screen.png)
+
 ##Introduction
 
 ![la french tech](http://www.lafrenchtech.com/sites/all/themes/frenchtech/img/logo.png)
