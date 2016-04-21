@@ -22,7 +22,6 @@
 // /////////////////////////////////////////////////////////////////////////////
 
 #include <string.h>
-#include "../include/dcmo5rom.h"
 
 #include "dcmo5.h"
 
@@ -79,7 +78,7 @@ void MO5videoram()
 
 void MO5rombank()
 {
-    if( (carflags & 4) == 0 ) {rombank = mo5rom - 0xc000; return; }
+    if( (carflags & 4) == 0 ) {rombank = mo5_rom - 0xc000; return; }
     rombank = car - 0xb000 + ( (carflags & 0x03) << 14 );
     if(cartype == 2) if(carflags & 0x10) rombank += 0x10000;
 }
@@ -174,7 +173,7 @@ void Hardreset()
     penbutton = 0;
     videolinecycle = 0;
     videolinenumber = 0;
-    romsys = mo5rom - 0xc000;
+    romsys = mo5_rom - 0xc000;
     ramuser = ram + 0x2000;
     for(i = 0; i < sizeof(ram); i++) ram[i] = -( (i & 0x80) >> 7 );
     for(i = 0; i < sizeof(port); i++) port[i] = 0;
@@ -271,7 +270,8 @@ signed char MgetMO5(unsigned short a)
                 case 0xa7e1: return 0xff;     // zero provoque erreur 53 sur imprimante
                 case 0xa7e6: return Iniln() << 1;
                 case 0xa7e7: return Initn();
-                default: if(a < 0xa7c0) return(cd90640rom[a & 0x7ff]);
+                default:
+                    if(a < 0xa7c0) return 0; //return(cd90640rom[a & 0x7ff]); -micromo : no fd, no rom
                     if(a < 0xa800) return(port[a & 0x3f]);
                     return(0);
             }

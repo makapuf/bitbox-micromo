@@ -14,7 +14,7 @@
 #define BG_TITLE 233 // bg title orange
 #define BG_SELECTED 242 // bg selected - orange
 
-#define FONT (mo5rom + 0xfc9e - 0xc000 -1)
+#define FONT (mo5_rom + 0xfc9e - 0xc000 -1)
 #define POS_HIDDEN (-200)
 
 // internal state used for display

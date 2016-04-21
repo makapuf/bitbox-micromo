@@ -6,7 +6,7 @@
 #define TOUR_V ((VGA_V_PIXELS-200)/2)
 
 // in emulation
-extern const char mo5rom[];
+extern const unsigned char mo5_rom[];
 extern char ram[0xc000];                    // ram 48K.
 
 extern char *ramvideo;                      // pointeur couleurs ou formes . Change selon IO !

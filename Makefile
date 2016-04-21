@@ -12,7 +12,7 @@ files = micromo_main \
 DEFINES += VGAMODE_400 KEYB_FR DISABLE_ESC_EXIT
 
 GAME_C_FILES = $(files:%=source/%.c)
-GAME_BINARY_FILES = software/SHR_MO5_FirstEver.k7
+GAME_BINARY_FILES = software/SHR_MO5_FirstEver.k7 mo5.rom
 
 include $(BITBOX)/lib/bitbox.mk
 
