@@ -87,10 +87,6 @@ void graph_line8(void) {
 
 void game_init() {
     // initialisations
-//    Joyinit();                        // Joysticks initialization
-//    Keyboardinit();                   // Keyboard initialization
-
-   // Initfilenames();
     Init6809registerpointers();
     Hardreset();                      // MO5 initialization
 }
@@ -106,7 +102,12 @@ void game_frame() {
 
 // STUBS for Bitbox
 
-void Erreur(int n) {}
+void Erreur(int n) {
+	message("Erreur %d\n",n);
+	dialog_menu("Error","Error undefined",0);
+}
+
+
 void Displayline(int videolinenumber) {}
 
 

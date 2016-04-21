@@ -53,7 +53,7 @@ void Readoctetk7()
         Initprog(); // reset
         Erreur(12);
         k7_pos=0;
-        Drawk7index();
+        message("k7 pos : %d\n",k7_pos); // Drawk7index();
     } else {
         *Ap = k7octet = k7_data[k7_pos++];
         Mputc(0x2045, k7octet);
