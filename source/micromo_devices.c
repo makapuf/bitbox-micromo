@@ -17,8 +17,8 @@ extern char *Ap, *Bp;
 
 // -----------------------------
 
-char *k7_name="SHINRA MO5:FirstEver";
-char *k7_data=software_SHR_MO5_FirstEver_k7; // XXX for now no selection of cassette, only one.
+char *k7_name="software/Forever14.k7";
+char *k7_data=software_Forever14_k7; // XXX for now no selection of cassette, only one.
 int k7_len; // cannot use const here ?
 int k7_pos=0; // pos in k7. cannot be used here (const ...)
 int k7bit = 0;      // puissance de 2 designant le bit k7 en cours
@@ -49,12 +49,14 @@ void Imprime()
 void Readoctetk7()
 {
     //if (k7_pos==k7_len) {
-    if ( k7_pos==software_SHR_MO5_FirstEver_k7_len ) { // XXX use k7_len !
+    if ( k7_pos==software_Forever14_k7_len ) { // XXX use k7_len !
         Initprog(); // reset
         Erreur(12);
         k7_pos=0;
-        message("k7 pos : %d\n",k7_pos); // Drawk7index();
     } else {
+        if (k7_pos%512==0)
+            message("k7 pos : %d\n",k7_pos/512); // Drawk7index();
+
         *Ap = k7octet = k7_data[k7_pos++];
         Mputc(0x2045, k7octet);
         k7bit = 0;
