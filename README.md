@@ -2,7 +2,7 @@
 
 ![Screenshot](https://raw.githubusercontent.com/makapuf/bitbox-micromo/master/screen.png)
 
-![My first demo](https://raw.githubusercontent.com/makapuf/bitbox-micromo/master/screen.png)
+![My first demo](https://raw.githubusercontent.com/makapuf/bitbox-micromo/master/screen2.png)
 
 ##Introduction
 
