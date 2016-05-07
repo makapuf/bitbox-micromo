@@ -11,7 +11,7 @@ void dialog_quit();
  items : \n separated list of items.
  callback to call when menu has been selected. set to NULL to show simple text.
 */
-void dialog_menu(char *_title, char *_items, void (*_callback)(int));
+void dialog_menu(const char *_title, const char *_items, void (*_callback)(int));
 
 
 // interface with main loop & callbacks

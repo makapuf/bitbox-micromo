@@ -6,13 +6,16 @@ files = micromo_main \
    micromo_devices \
    micromo_dialog
 
-# dcmo5keyb    dcmo5video dcmo5devices
+K7=$(wildcard software/[^_]*.k7)
 
 DEFINES += VGAMODE_400 KEYB_FR DISABLE_ESC_EXIT
 
 GAME_C_FILES = $(files:%=source/%.c)
-GAME_BINARY_FILES = software/Forever14.k7 mo5.rom
+GAME_BINARY_FILES = $(K7) mo5.rom
 
 include $(BITBOX)/lib/bitbox.mk
 
-source/micromo_devices.c: build/binaries.h
+build/k7.h: $(sort $(K7))
+	python k7list.py $^ > $@
+
+source/micromo_devices.c source/micromo_main.c: build/k7.h

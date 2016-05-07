@@ -4,6 +4,7 @@
 #include <bitbox.h>
 #include "dcmo5.h"
 #include "micromo_dialog.h"
+#include "../build/k7.h"
 
 
 const uint8_t palette[16] = {
@@ -30,7 +31,6 @@ const uint8_t palette[16] = {
 int report;           // nombre de milliemes de cycle a reporter
 
 int frequency = 1000;        // frequence 6809 en kHz
-int k7protection = 1;        // protection k7 (0=lecture/ecriture 1=lecture seule)
 
 /* Debug show ram replaces drawing the real device screen  with
    a graphical view of the memory for quick debugging. */
@@ -142,11 +142,17 @@ void Playsound(void *udata, Uint8 *stream, int bufferlength)
 
 void cb_k7(int choice) {
     message("selected k7 :%d\n",choice);
+    k7_data = k7list[choice].data;
+    k7_len = k7list[choice].size;
+    k7_pos = 0;
+    k7bit=0;
 }
 
 
 void main_cb(int x) {
     message("selected %d\n",x);
+
+
     switch(x) {
         case 0:
             dialog_menu("Keyboard Help",
@@ -158,9 +164,7 @@ void main_cb(int x) {
             pause6809 = 0;
             break;
         case 2:  // select k7
-            dialog_menu("Cassette select",
-            	"Arkanoid\nDemo\netc\netc\nceci\nest\nun\ntres\nlong\nmenu"
-            	"\nmais\nca\ndevrait\naller",cb_k7);
+            dialog_menu("Cassette select",k7list_str,cb_k7);
             break;
         case 3:
             pause6809 = 1-pause6809;
@@ -174,5 +178,5 @@ void main_cb(int x) {
 
 void main_menu()
 {
-    dialog_menu("MicroMO","Help\nReset\nSelect k7 (F2)\nPause\nA propos...",main_cb);
+    dialog_menu("MicroMO","Help\nReset\nSelect k7\nPause\nA propos...",main_cb);
 }

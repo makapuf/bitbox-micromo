@@ -1,5 +1,4 @@
 #include "dcmo5.h"
-#include "../build/binaries.h"
 
 void Drawk7index();
 void Initprog();
@@ -17,14 +16,14 @@ extern char *Ap, *Bp;
 
 // -----------------------------
 
-char *k7_name="software/Forever14.k7";
-char *k7_data=software_Forever14_k7; // XXX for now no selection of cassette, only one.
-int k7_len; // cannot use const here ?
-int k7_pos=0; // pos in k7. cannot be used here (const ...)
+char *k7_name;
+char *k7_data;
+int k7_len;
+int k7_pos=0; // pos in k7.
 int k7bit = 0;      // puissance de 2 designant le bit k7 en cours
 int k7octet;        // octet de la cassette en cours de traitement
+int k7protection;        // protection k7 (0=lecture/ecriture 1=lecture seule)
 
-int k7protection;
 int fdprotection;
 
 
@@ -48,8 +47,7 @@ void Imprime()
 
 void Readoctetk7()
 {
-    //if (k7_pos==k7_len) {
-    if ( k7_pos==software_Forever14_k7_len ) { // XXX use k7_len !
+    if (k7_pos==k7_len) {
         Initprog(); // reset
         Erreur(12);
         k7_pos=0;

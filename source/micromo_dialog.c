@@ -30,7 +30,7 @@ static int offset; // décalage d'affichage
 static int nb_elements; // current text/ menu number of lines
 
 // interface data
-static char *title, *items; // titre de la fenetre, lignes de contenu separees par \n, terminée par \0
+static const char *title, *items; // titre de la fenetre, lignes de contenu separees par \n, terminée par \0
 static void (*callback)(int); // if null display text, else display/interact as menu
 
 
@@ -49,7 +49,7 @@ void redraw()
 
 	// copy items, with offset
 	memset(vram,' ',sizeof(vram)); // clear screen
-	char *src=items;
+	const char *src=items;
 	char *dst=&vram[0][0]; // start up left
 	int  line=-offset;
 
@@ -193,7 +193,7 @@ int dialog_active() {
 
 
 // initialise menu / text
-void dialog_menu(char *_title, char *_items, void (*_callback)(int))
+void dialog_menu(const char *_title, const char *_items, void (*_callback)(int))
 {
 	title = _title;
 	items = _items;

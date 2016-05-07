@@ -16,7 +16,11 @@ extern const char *rombank;                       // pointeur banque rom ou cart
 extern int bordercolor; 					// couleur du bord 0-f
 extern uint8_t touche[];                      // etat des touches MO5
 
-
+extern char *k7_name;
+extern char *k7_data;
+extern int k7_len; // cannot use const here ?
+extern int k7_pos; // pos in k7. cannot be used here (const ...)
+extern int k7bit;
 extern int k7protection;
 extern int fdprotection;
 
@@ -34,3 +38,7 @@ int Run(int); // Runs N times
 
 // in main
 void Erreur(int n);
+
+// ROM
+extern const unsigned char mo5_rom[];
+extern const unsigned int mo5_rom_len;
