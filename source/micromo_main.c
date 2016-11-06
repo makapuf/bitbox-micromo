@@ -39,8 +39,7 @@ int frequency = 1000;        // frequence 6809 en kHz
 
 
 
-void graph_frame() {};
-void graph_line8(void) {
+void graph_line(void) {
 
 	if (vga_odd) {
 		dialog_drawline8();

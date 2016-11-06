@@ -1,3 +1,4 @@
+#include "lib/events/events.h"
 
 #define DIALOG_X 80
 #define DIALOG_W 25

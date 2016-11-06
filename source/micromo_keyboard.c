@@ -69,8 +69,12 @@ static uint8_t pckeycode[]= {
 void micromo_keyboard (void)
 {
 	struct event e;
+
+    events_poll();
+
 	while (1) {
 		e=event_get();
+
 		if (e.type==no_event)
 			break;
 		else if (e.type==evt_keyboard_press) {
