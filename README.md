@@ -36,3 +36,9 @@ This is a port of the DCMO5 emulator on another "famous" french micro computer: 
 	- http://pulkomandy.tk/projects/thomson/browser/Thomson
 
  - Forever14 demo by Shinra http://shinra.cpcscene.com/
+
+## Run Demo
+
+Open emulator, Load k7 Forever14, then type LOADM "",,R <Entree> (note the two commas " is left shift + 2) - but you would have figured it out yourself :)
+
+
